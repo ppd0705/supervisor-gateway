@@ -1,0 +1,10 @@
+# lint
+autoflake>=1.4.0
+isort>=5.10.0
+black>=22.1.0
+vulture>=2.3.0
+
+# test
+pytest>=7.1.0
+coverage>=6.3.2
+
