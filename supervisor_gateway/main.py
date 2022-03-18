@@ -1,5 +1,6 @@
 from asyncio import get_event_loop
-from typing import Any, Dict
+from typing import Any
+from typing import Dict
 
 from aiohttp.web import Application
 
@@ -8,6 +9,7 @@ from supervisor_gateway.api.rpc import rpc_routes
 from supervisor_gateway.config import conf
 from supervisor_gateway.event_listener import Listener
 from supervisor_gateway.log import logger
+from supervisor_gateway.middleware import error_middleware
 from supervisor_gateway.rpc import RPC
 from supervisor_gateway.time import now
 
@@ -55,7 +57,7 @@ async def on_shutdown(app: Application):
 
 
 def get_app() -> Application:
-    app = Application()
+    app = Application(middlewares=[error_middleware])
     app["processes"]: Dict[str, Dict[str, Any]] = {}
     app.add_routes(rpc_routes)
     app.add_routes(local_routes)
