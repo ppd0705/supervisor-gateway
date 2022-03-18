@@ -2,7 +2,7 @@ import asyncio
 from typing import Callable
 
 from aiofiles import open as aio_open
-from aiofiles.threadpool.binary import AsyncBufferedIOBase
+from aiofiles.threadpool.text import AsyncTextIOWrapper
 
 from supervisor_gateway.log import logger
 
@@ -10,13 +10,13 @@ READY = "READY\n"
 ACKNOWLEDGED = "RESULT 2\nOK"
 
 
-async def write(stream: AsyncBufferedIOBase, msg: str):
+async def write(stream: AsyncTextIOWrapper, msg: str):
     await stream.write(msg)
     await stream.flush()
 
 
-async def read(stream: AsyncBufferedIOBase) -> dict:
-    header_line = str(await stream.readline())
+async def read(stream: AsyncTextIOWrapper) -> dict:
+    header_line = await stream.readline()
     event = {}
     for line in header_line.split():
         k, v = line.split(":", 1)
