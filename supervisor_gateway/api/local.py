@@ -1,4 +1,6 @@
-from aiohttp.web import Request, RouteTableDef, json_response
+from aiohttp.web import Request
+from aiohttp.web import RouteTableDef
+from aiohttp.web import json_response
 
 local_routes = RouteTableDef()
 
