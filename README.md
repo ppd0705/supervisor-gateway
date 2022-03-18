@@ -23,8 +23,7 @@ make install
 
 ## Usage
 
-`supervisor-gateway` running as child process of supervisord, there is an [supervisor config_example](config/supervisor/supervisor_gateway.conf)
-
+`supervisor-gateway` running as child process of supervisord, there is a [supervisor config_example](config/supervisor/supervisor_gateway.conf)
 
 ```ini
 [eventlistener:supervisor_gateway]
@@ -44,6 +43,16 @@ some supported environments blow:
 - SG_RPC
 - SG_LOG_LEVEL
 - SG_LOG_FILE
+
+update supervisor conf
+```shell
+supervisorctl update supervisor_gateway
+```
+
+check it 
+```shell
+curl  http://localhost:$SG_PORT/rpc/state  
+```
 
 ## TODO
 - [] Add unit test
