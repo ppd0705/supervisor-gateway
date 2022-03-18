@@ -1,4 +1,6 @@
-from typing import Dict, List, Tuple
+from typing import Dict
+from typing import List
+from typing import Tuple
 
 from aiohttp_xmlrpc.client import ServerProxy
 from aiohttp_xmlrpc.exceptions import ServerError
@@ -46,6 +48,11 @@ class RPC:
 
     async def get_all_process_info(self) -> List[Dict]:
         return await self.client.supervisor.getAllProcessInfo()
+
+    async def get_process_info(self, name: str) -> bool:
+        if ":" not in name:
+            name = f"{name}:{name}"
+        return await self.client.supervisor.getProcessInfo(name)
 
     async def start_process(self, name: str) -> bool:
         if ":" not in name:
