@@ -8,4 +8,4 @@ fi
 set -ex
 
 ${PREFIX}coverage run -m pytest $@
-${PREFIX}coverage report --show-missing --skip-covered --fail-under=100
+${PREFIX}coverage report --show-missing --skip-covered --fail-under=91

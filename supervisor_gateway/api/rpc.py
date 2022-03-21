@@ -1,61 +1,49 @@
-from aiohttp.web import Request
-from aiohttp.web import RouteTableDef
-from aiohttp.web import json_response
+from typing import List
 
-from supervisor_gateway.rpc import RPC
+from fastapi import APIRouter
 
-rpc_routes = RouteTableDef()
+from supervisor_gateway.rpc import rpc
+from supervisor_gateway.schema import ProcessInfo
+from supervisor_gateway.schema import SupervisorState
+from supervisor_gateway.supervisor import format_process_info
+
+router = APIRouter()
 
 
-@rpc_routes.get("/rpc/state")
-async def get_rpc_state(request: Request):
-    rpc: RPC = request.app["rpc"]
+@router.get("/state", response_model=SupervisorState)
+async def get_rpc_state():
     data = await rpc.get_state()
-    return json_response(data)
+    return {"state": data["statename"]}
 
 
-@rpc_routes.get("/rpc/processes")
-async def list_rpc_processes(request: Request):
-    rpc: RPC = request.app["rpc"]
+@router.get("/processes", response_model=List[ProcessInfo])
+async def list_rpc_processes():
     data = await rpc.get_all_process_info()
-    return json_response(data)
+    processes = [format_process_info(item) for item in data]
+    return processes
 
 
-@rpc_routes.get("/rpc/processes/{name}")
-async def get_rpc_process(request: Request):
-    rpc: RPC = request.app["rpc"]
-    name = request.match_info["name"]
-    data = await rpc.get_process_info(name)
-    return json_response(data)
+@router.get("/processes/{name}", response_model=ProcessInfo)
+async def get_rpc_process(name: str):
+    item = await rpc.get_process_info(name)
+    return format_process_info(item)
 
 
-@rpc_routes.post("/rpc/processes/{name}/stop")
-async def stop_rpc_process(request: Request):
-    rpc: RPC = request.app["rpc"]
-    name = request.match_info["name"]
-    data = await rpc.stop_process(name)
-    return json_response(data)
+@router.post("/processes/{name}/stop")
+async def stop_rpc_process(name: str):
+    await rpc.stop_process(name)
 
 
-@rpc_routes.post("/rpc/processes/{name}/restart")
-async def restart_rpc_process(request: Request):
-    rpc: RPC = request.app["rpc"]
-    name = request.match_info["name"]
-    data = await rpc.restart_process(name)
-    return json_response(data)
+@router.post("/processes/{name}/restart")
+async def restart_rpc_process(name: str):
+    await rpc.restart_process(name)
 
 
-@rpc_routes.post("/rpc/processes/{name}/add")
-async def add_rpc_process(request: Request):
-    rpc: RPC = request.app["rpc"]
-    name = request.match_info["name"]
-    data = await rpc.add_process_group(name)
-    return json_response(data)
+@router.post("/processes/{name}/add")
+async def add_rpc_process(name: str):
+    await rpc.add_process_group(name)
 
 
-@rpc_routes.post("/rpc/processes/{name}/remove")
-async def remove_rpc_process(request: Request):
-    rpc: RPC = request.app["rpc"]
-    name = request.match_info["name"]
-    data = await rpc.remove_process_group(name)
-    return json_response(data)
+@router.post("/processes/{name}/remove")
+async def remove_rpc_process(name: str):
+    await rpc.remove_process_group(name)

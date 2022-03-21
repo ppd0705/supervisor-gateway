@@ -1,8 +1,7 @@
-from aiohttp.web import run_app
+import uvicorn
 
 from supervisor_gateway.config import conf
-from supervisor_gateway.log import logger
-from supervisor_gateway.main import application
+from supervisor_gateway.main import app
 
 if __name__ == "__main__":
-    run_app(application, host=conf.host, port=conf.port, print=logger.info)
+    uvicorn.run(app, host=conf.host, port=conf.port)

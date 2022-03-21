@@ -1,3 +1,6 @@
 aiohttp-xmlrpc>=1.5.0
 aiofiles>=0.8.0
-aiohttp
+fastapi>=0.75.0
+pydantic
+starlette
+uvicorn>=0.17.6

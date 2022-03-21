@@ -8,7 +8,7 @@ with open("requirements_dev.txt") as readme_file:
 
 setup(
     name="supervisor-gateway",
-    version="0.1.0",
+    version="0.2.0",
     author="ppd0705",
     author_email="ppd0705@icloud.com",
     description="An RESTful supervisor gateway with paginated and cached process info",

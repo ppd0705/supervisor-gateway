@@ -1,38 +1,26 @@
 from typing import Dict
 from typing import List
+from typing import Optional
 from typing import Tuple
 
 from aiohttp_xmlrpc.client import ServerProxy
 from aiohttp_xmlrpc.exceptions import ServerError
 
-
-class Faults:
-    UNKNOWN_METHOD = 1
-    INCORRECT_PARAMETERS = 2
-    BAD_ARGUMENTS = 3
-    SIGNATURE_UNSUPPORTED = 4
-    SHUTDOWN_STATE = 6
-    BAD_NAME = 10
-    BAD_SIGNAL = 11
-    NO_FILE = 20
-    NOT_EXECUTABLE = 21
-    FAILED = 30
-    ABNORMAL_TERMINATION = 40
-    SPAWN_ERROR = 50
-    ALREADY_STARTED = 60
-    NOT_RUNNING = 70
-    SUCCESS = 80
-    ALREADY_ADDED = 90
-    STILL_RUNNING = 91
-    CANT_REREAD = 92
+from supervisor_gateway.config import conf
+from supervisor_gateway.supervisor import Faults
 
 
 class RPC:
     def __init__(self, url: str):
-        self.client = ServerProxy(url)
+        self.url = url
+        self.client: Optional[ServerProxy] = None
+
+    def init_client(self):
+        self.client = ServerProxy(self.url)
 
     async def close(self):
-        await self.client.close()
+        if self.client:
+            await self.client.close()
 
     async def list_methods(self) -> List[str]:
         return await self.client.system.listMethods()
@@ -92,3 +80,6 @@ class RPC:
     async def remove_process_group(self, name: str) -> bool:
         await self.stop_process_group(name)
         return await self.client.supervisor.removeProcessGroup(name)
+
+
+rpc = RPC(conf.rpc_url)

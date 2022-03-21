@@ -1,67 +1,57 @@
-from aiohttp.web import Response
-from aiohttp.web import json_response
+from typing import Dict
+from typing import List
+from typing import Union
 
 
 class BaseError(Exception):
-    _CODE: int = 50000
-    _MSG: str = "unknown error"
+    code: int = 50000
+    name: str = "UNKNOWN_ERROR"
+    detail: Union[str, List[Dict]] = ""
 
-    def __init__(self, extra_msg: str = ""):
-        self._extra_msg = extra_msg
-
-    @property
-    def code(self) -> str:
-        return self.code
-
-    @property
-    def msg(self) -> str:
-        if not self._extra_msg:
-            return self._MSG
-        return f"{self._MSG}: {self._extra_msg}"
+    def __init__(self, detail: Union[str, List[Dict]] = ""):
+        self.detail = detail
 
     @property
     def http_code(self) -> int:
-        return self._CODE // 100
+        return self.code // 100
 
     def dict(self) -> dict:
         return {
             "code": self.code,
-            "msg": self.msg,
+            "name": self.name,
+            "detail": self.detail,
         }
 
-    def json_response(self) -> Response:
-        return json_response(data=self.dict(), status=self.http_code)
 
-
-class BadQuestError(BaseError):
-    _CODE: int = 40000
-    _MSG: str = "bad request"
+class BadRequestError(BaseError):
+    code: int = 40000
+    name: str = "BAD_REQUEST"
 
 
 class InvalidParameterError(BaseError):
-    _CODE: int = 40001
-    _MSG: str = "invalid parameters"
+    code: int = 40001
+    name: str = "INVALID_PARAMETER"
 
 
 class NotFoundError(BaseError):
-    _CODE: int = 40400
-    _MSG: str = "path not found"
+    code: int = 40400
+    name: str = "PATH_NOT_FOUND"
 
 
 class ProcessNotFoundError(BaseError):
-    _CODE: int = 40401
-    _MSG: str = "process not found"
+    code: int = 40401
+    name: str = "PROCESS_NOT_FOUND"
 
 
 class MethodNotAllowedError(BaseError):
-    _CODE: int = 40501
-    _MSG: str = "method not allowed"
+    code: int = 40501
+    name: str = "METHOD_NOT_ALLOWED"
 
 
 class InternalError(BaseError):
-    _MSG: str = "internal error"
+    name: str = "INTERNAL_ERROR"
 
 
 class SupervisordError(BaseError):
-    _CODE: int = 50001
-    _MSG: str = "supervisord error"
+    code: int = 50001
+    name: str = "SUPERVISORD_ERROR"
