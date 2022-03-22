@@ -2,10 +2,10 @@ from typing import List
 
 from fastapi import APIRouter
 
-from supervisor_gateway.rpc import rpc
 from supervisor_gateway.schema import ProcessInfo
 from supervisor_gateway.schema import SupervisorState
 from supervisor_gateway.supervisor import format_process_info
+from supervisor_gateway.xml_rpc import rpc
 
 router = APIRouter()
 

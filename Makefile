@@ -3,7 +3,7 @@
 install:
 	@bash ./scripts/install.sh
 
-## lint: check syntax and styling
+## lint: format syntax and styling
 .PHONT: lint
 lint:
 	@bash ./scripts/lint.sh
@@ -17,6 +17,11 @@ clean:
 .PHONT: test
 test:
 	@bash ./scripts/test.sh
+
+## check: check syntax and styling
+.PHONT: check
+check:
+	@bash ./scripts/check.sh
 
 ## help: Show this help info.
 .PHONT: help

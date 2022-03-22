@@ -1,5 +1,7 @@
 import asyncio
 from typing import Callable
+from typing import Dict
+from typing import Union
 
 from aiofiles import open as aio_open
 from aiofiles.threadpool.text import AsyncTextIOWrapper
@@ -15,9 +17,9 @@ async def write(stream: AsyncTextIOWrapper, msg: str):
     await stream.flush()
 
 
-async def read(stream: AsyncTextIOWrapper) -> dict:
+async def read(stream: AsyncTextIOWrapper) -> Dict[str, Union[str, Dict]]:
     header_line = await stream.readline()
-    event = {}
+    event: Dict = {}
     for line in header_line.split():
         k, v = line.split(":", 1)
         event[k] = v
@@ -27,7 +29,6 @@ async def read(stream: AsyncTextIOWrapper) -> dict:
         k, v = line.split(":", 1)
         payload[k] = v
     event["payload"] = payload
-    logger.info(f"\n{header_line}\n\n{payload_str}\n\n{event}")
     return event
 
 

@@ -2,12 +2,9 @@
 autoflake>=1.4.0
 isort>=5.10.0
 black>=22.1.0
-vulture>=2.3.0
-
+flake8>=4.0.0
 
 # test
-flake8>=4.0.0
-mypy>=0.941
 pytest>=7.1.0
 pytest-mock>=3.7.0
 coverage>=6.3.2

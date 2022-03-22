@@ -36,7 +36,7 @@ app = get_app()
 async def on_startup():
     from supervisor_gateway.event_listener import listener
     from supervisor_gateway.local_state import state
-    from supervisor_gateway.rpc import rpc
+    from supervisor_gateway.xml_rpc import rpc
 
     rpc.init_client()
 
@@ -54,7 +54,7 @@ async def on_startup():
 @app.on_event("shutdown")
 async def on_shutdown():
     from supervisor_gateway.event_listener import listener
-    from supervisor_gateway.rpc import rpc
+    from supervisor_gateway.xml_rpc import rpc
 
     listener.stop()
     await rpc.close()

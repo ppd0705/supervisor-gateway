@@ -1,8 +1,8 @@
 import pytest
 from aiohttp_xmlrpc.exceptions import ServerError
 
-from supervisor_gateway.rpc import rpc
 from supervisor_gateway.supervisor import Faults
+from supervisor_gateway.xml_rpc import rpc
 
 
 class FakeClient:
