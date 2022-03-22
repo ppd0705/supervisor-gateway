@@ -34,6 +34,11 @@ async def stop_rpc_process(name: str):
     await rpc.stop_process(name)
 
 
+@router.post("/processes/{name}/start")
+async def start_rpc_process(name: str):
+    await rpc.start_process(name)
+
+
 @router.post("/processes/{name}/restart")
 async def restart_rpc_process(name: str):
     await rpc.restart_process(name)
