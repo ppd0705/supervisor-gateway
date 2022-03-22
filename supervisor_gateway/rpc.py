@@ -3,6 +3,9 @@ from typing import List
 from typing import Optional
 from typing import Tuple
 
+from aiohttp import UnixConnector
+from aiohttp import ClientSession
+
 from aiohttp_xmlrpc.client import ServerProxy
 from aiohttp_xmlrpc.exceptions import ServerError
 
@@ -16,7 +19,16 @@ class RPC:
         self.client: Optional[ServerProxy] = None
 
     def init_client(self):
-        self.client = ServerProxy(self.url)
+        if self.url.startswith("unix://"):
+            conn = UnixConnector(path=self.url[7:])
+            session = ClientSession(connector=conn)
+            client = ServerProxy(
+                'http://127.0.0.1/RPC2',
+                client=session
+            )
+        else:
+            client = ServerProxy(self.url)
+        self.client = client
 
     async def close(self):
         if self.client:
