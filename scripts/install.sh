@@ -7,6 +7,5 @@ fi
 
 set -x
 
-${PREFIX}pip install -r requirements_dev.txt
-${PREFIX}pip install -r requirements_dev.txt
+${PREFIX}pip install -r requirements.txt
 ${PREFIX}pip install -e .

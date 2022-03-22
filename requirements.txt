@@ -5,3 +5,16 @@ pydantic
 starlette
 fastapi>=0.75.0
 uvicorn>=0.17.6
+
+# lint
+autoflake>=1.4.0
+isort>=5.10.0
+black>=22.1.0
+flake8>=4.0.0
+
+# test
+pytest>=7.1.0
+pytest-mock>=3.7.0
+coverage>=6.3.2
+pytest-asyncio>=0.18.2
+httpx>=0.22.0
