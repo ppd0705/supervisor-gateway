@@ -23,7 +23,7 @@ make install
 
 ## Usage
 
-`supervisor-gateway` running as child process of supervisord, there is a [supervisor config_example](config/supervisor/supervisor_gateway.conf)
+`supervisor-gateway` running as child process of supervisord, there is a [supervisor config example](config/supervisor/supervisor_gateway.conf)
 
 ```ini
 [eventlistener:supervisor_gateway]
@@ -43,6 +43,9 @@ some supported environments blow:
 - SG_RPC
 - SG_LOG_LEVEL
 - SG_LOG_FILE
+- SG_LOG_FILE
+- SG_STDIN
+- SG_STDOUT
 
 update supervisor conf
 ```shell
@@ -69,3 +72,4 @@ Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 - [multivisor](https://github.com/tiagocoutinho/multivisor)
 - [aiofiles](https://github.com/Tinche/aiofiles)
 - [aiohttp-xmlrpc](https://github.com/mosquito/aiohttp-xmlrpc)
+- [fastapi](https://github.com/tiangolo/fastapi)
