@@ -7,12 +7,13 @@ from httpx import AsyncClient
 from supervisor_gateway.main import app
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def event_loop():
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
 
 
-@pytest_asyncio.fixture(scope="module")
+@pytest_asyncio.fixture(scope="session")
 async def client() -> AsyncClient:
-    yield AsyncClient(app=app, base_url="http://test")
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        yield ac

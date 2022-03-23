@@ -79,7 +79,7 @@ async def test_listener():
                 msg = stdin_msg_template % (process_state, process_name)
                 tmp_stdin.write(msg.encode())
                 tmp_stdin.flush()
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.5)
             listener.stop()
 
     assert len(rets) == 2

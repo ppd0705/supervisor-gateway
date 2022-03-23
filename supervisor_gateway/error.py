@@ -44,7 +44,7 @@ class ProcessNotFoundError(BaseError):
 
 
 class MethodNotAllowedError(BaseError):
-    code: int = 40501
+    code: int = 40500
     name: str = "METHOD_NOT_ALLOWED"
 
 

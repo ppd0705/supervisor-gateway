@@ -1,7 +1,6 @@
 from typing import Dict
 from typing import List
 from typing import Optional
-from typing import Tuple
 
 from aiohttp import ClientSession
 from aiohttp import UnixConnector
@@ -29,6 +28,7 @@ class RPC:
     async def close(self):
         if self.client:
             await self.client.close()
+            self.client = None
 
     async def list_methods(self) -> List[str]:
         return await self.client.system.listMethods()
@@ -37,10 +37,10 @@ class RPC:
         state = await self.client.supervisor.getState()
         return state
 
-    async def reread(self) -> Tuple[List[str], List[str], List[str]]:
+    async def reread(self) -> List[List[str]]:
         data = await self.client.supervisor.reloadConfig()
         added, changed, dropped = data[0]
-        return added, changed, dropped
+        return [added, changed, dropped]
 
     async def get_all_process_info(self) -> List[Dict]:
         return await self.client.supervisor.getAllProcessInfo()

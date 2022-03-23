@@ -9,7 +9,7 @@ export SOURCE_FILES="supervisor_gateway tests"
 set -x
 
 
-${PREFIX}autoflake --in-place --recursive $SOURCE_FILES
+${PREFIX}autoflake --in-place --recursive --remove-all-unused-imports $SOURCE_FILES
 ${PREFIX}isort --sl --project=supervisor_gateway $SOURCE_FILES
 ${PREFIX}black --target-version=py38 $SOURCE_FILES
 ${PREFIX}flake8 $SOURCE_FILES --max-line-length 119
