@@ -1,3 +1,9 @@
+
+--- 
+<a href="https://github.com/ppd0705/supervisor-gateway/actions">
+    <img src="https://github.com/ppd0705/supervisor-gateway/workflows/Test%20Suite/badge.svg" alt="Test Suite">
+</a>
+
 # supervisor-gateway
 
 An RESTful supervisor gateway with paginated and cached process info
