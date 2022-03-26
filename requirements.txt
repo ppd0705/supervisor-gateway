@@ -20,3 +20,4 @@ httpx>=0.22.0
 
 # publish
 twine==3.8.0
+wheel==0.37.1
