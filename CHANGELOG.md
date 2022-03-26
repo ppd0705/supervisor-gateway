@@ -1,3 +1,8 @@
+## 0.3.1  (2022-03-26)
+
+### Fix
+- add dependency package: wheel
+
 ## 0.3.0  (2022-03-26)
 
 ### Refactor
