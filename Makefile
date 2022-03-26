@@ -23,6 +23,16 @@ test:
 check:
 	@bash ./scripts/check.sh
 
+## build: build package
+.PHONT: build
+build:
+	@bash ./scripts/build.sh
+
+## publish: upload package to pypi
+.PHONT: build
+publish:
+	@bash ./scripts/publish.sh
+
 ## help: Show this help info.
 .PHONT: help
 help: Makefile

@@ -1,8 +1,14 @@
-
---- 
+<p align="center">
 <a href="https://github.com/ppd0705/supervisor-gateway/actions">
     <img src="https://github.com/ppd0705/supervisor-gateway/workflows/Test%20Suite/badge.svg" alt="Test Suite">
 </a>
+<a href="https://pypi.org/project/supervisor-gateway" target="_blank">
+    <img src="https://img.shields.io/pypi/v/supervisor-gateway?color=%2334D058&label=pypi%20package" alt="Package version">
+</a>
+<a href="https://pypi.org/project/supervisor-gateway" target="_blank">
+    <img src="https://img.shields.io/pypi/pyversions/supervisor-gateway.svg?color=%2334D058" alt="Supported Python versions">
+</a>
+</p>
 
 # supervisor-gateway
 
@@ -44,14 +50,11 @@ buffer_size = 1024
 ```
 
 some supported environments blow:
-- SG_HOST
-- SG_PORT
-- SG_RPC
-- SG_LOG_LEVEL
-- SG_LOG_FILE
-- SG_LOG_FILE
-- SG_STDIN
-- SG_STDOUT
+- SG_HOST: listen host
+- SG_PORT: listen port
+- SG_RPC: supervisord rpc url
+- SG_LOG_LEVEL: log level
+- SG_LOG_FILE: log file
 
 update supervisor conf
 ```shell
@@ -60,13 +63,15 @@ supervisorctl update supervisor_gateway
 
 check it 
 ```shell
-curl  http://localhost:$SG_PORT/rpc/state  
+curl  http://localhost:1234/rpc/state  
 ```
 
+interact with api document in the browser [http://localhost:1234/docs](http://localhost:1234/docs)
+
 ## TODO
-- [] Add unit test
-- [] Add more API
-- [] Add API documents
+- [x] Add unit test
+- [x] Add more API
+- [x] Add API documents
 
 ## License
 

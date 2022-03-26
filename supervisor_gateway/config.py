@@ -14,9 +14,5 @@ class Conf:
         self.log_level: str = os.environ.get("SG_LOG_LEVEL") or "DEBUG"
         self.log_file: str = os.environ.get("SG_LOG_FILE") or "supervisor_gateway.log"
 
-        # std file
-        self.stdin: str = os.environ.get("SG_STDIN") or "/dev/stdin"
-        self.stdout: str = os.environ.get("SG_STDOUT") or "/dev/stdout"
-
 
 conf = Conf()
