@@ -1,57 +1,15 @@
 import asyncio
-from tempfile import NamedTemporaryFile
+import os
 
-import pytest  # noqa
-from aiofiles import tempfile  # noqa
+import pytest
+from pytest_mock import MockerFixture
 
-from supervisor_gateway.config import conf
 from supervisor_gateway.event_listener import listener
-from supervisor_gateway.event_listener import read
-from supervisor_gateway.event_listener import write
-from supervisor_gateway.supervisor import READY
+from supervisor_gateway.event_listener import open_connection
 
 
 @pytest.mark.asyncio
-async def test_write():
-    async with tempfile.TemporaryFile(mode="w+") as f:
-        for i in range(3):
-            await write(f, READY)
-        await f.seek(0)
-        async for line in f:
-            assert line == READY
-
-
-@pytest.mark.asyncio
-async def test_read():
-    msg = (
-        "ver:3.0 server:lid001 serial:52611 "
-        "pool:supervisor_gateway poolserial:13190 eventname:PROCESS_STATE_RUNNING len:69\n"
-        "processname:exits_10s groupname:Counter from_state:STARTING pid:31168"
-    )
-    target = {
-        "ver": "3.0",
-        "server": "lid001",
-        "serial": "52611",
-        "pool": "supervisor_gateway",
-        "poolserial": "13190",
-        "eventname": "PROCESS_STATE_RUNNING",
-        "len": "69",
-        "payload": {
-            "processname": "exits_10s",
-            "groupname": "Counter",
-            "from_state": "STARTING",
-            "pid": "31168",
-        },
-    }
-    async with tempfile.TemporaryFile(mode="w+") as f:
-        await write(f, msg)
-        await f.seek(0)
-        event = await read(f)
-        assert event == target
-
-
-@pytest.mark.asyncio
-async def test_listener():
+async def test_listener(mocker: MockerFixture):
     rets = []
 
     def handler(event: dict):
@@ -69,18 +27,24 @@ async def test_listener():
         ("AAA", "aaaaaaaaa"),
         ("BB", "bbbbbbbbb"),
     ]
-    with NamedTemporaryFile() as tmp_stdin:
-        with NamedTemporaryFile() as tmp_stdout:
-            conf.stdin = tmp_stdin.name
-            conf.stdout = tmp_stdout.name
+    read_fd, write_fd = os.pipe()
+    tmp_stdin_r = open(read_fd, "r")
+    tmp_stdin_w = open(write_fd, "w")
 
-            loop.create_task(listener.start())
-            for process_state, process_name in args:
-                msg = stdin_msg_template % (process_state, process_name)
-                tmp_stdin.write(msg.encode())
-                tmp_stdin.flush()
-            await asyncio.sleep(0.5)
-            listener.stop()
+    read_fd, write_fd = os.pipe()
+    tmp_stdout_w = open(write_fd, "w")
+
+    reader, writer = await open_connection(tmp_stdin_r, tmp_stdout_w)
+    mock = mocker.patch("supervisor_gateway.event_listener.open_connection")
+    mock.return_value = (reader, writer)
+
+    loop.create_task(listener.start())
+    for process_state, process_name in args:
+        msg = stdin_msg_template % (process_state, process_name)
+        tmp_stdin_w.write(msg)
+        tmp_stdin_w.flush()
+    await asyncio.sleep(0.5)
+    listener.stop()
 
     assert len(rets) == 2
     for i, event in enumerate(rets):

@@ -12,6 +12,7 @@ async def test_on_event(mocker: MockerFixture):
     mock.return_value = {"statename": "AAA"}
     mock = mocker.patch("supervisor_gateway.xml_rpc.rpc.get_all_process_info")
     mock.return_value = []
+    mocker.patch("supervisor_gateway.event_listener.listener.start")
     await app.router.startup()
     assert rpc.client is not None
     assert listener.handler is not None

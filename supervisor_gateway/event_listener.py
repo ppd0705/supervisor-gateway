@@ -1,29 +1,38 @@
 import asyncio
+import sys
+from asyncio import StreamReader
+from asyncio import StreamReaderProtocol
+from asyncio import StreamWriter
 from typing import Callable
 from typing import Dict
 from typing import Union
 
-from aiofiles import open as aio_open
-from aiofiles.threadpool.text import AsyncTextIOWrapper
-
-from supervisor_gateway.config import conf
 from supervisor_gateway.log import logger
 from supervisor_gateway.supervisor import ACKNOWLEDGED
 from supervisor_gateway.supervisor import READY
 
 
-async def write(stream: AsyncTextIOWrapper, msg: str):
-    await stream.write(msg)
-    await stream.flush()
+class StandardStreamReaderProtocol(StreamReaderProtocol):
+    def connection_made(self, transport):
+        if self._stream_reader._transport is not None:  # noqa
+            return
+        super().connection_made(transport)
 
 
-async def read(stream: AsyncTextIOWrapper) -> Dict[str, Union[str, Dict]]:
-    header_line = await stream.readline()
+async def write(stream: StreamWriter, msg: str):
+    stream.write(msg.encode())
+    await stream.drain()
+
+
+async def read(stream: StreamReader) -> Dict[str, Union[str, Dict]]:
+    data = await stream.readline()
+    header_line = data.decode()
     event: Dict = {}
     for line in header_line.split():
         k, v = line.split(":", 1)
         event[k] = v
-    payload_str = str(await stream.read(int(event["len"])))
+    data = await stream.read(int(event["len"]))
+    payload_str = data.decode()
     payload = {}
     for line in payload_str.split():
         k, v = line.split(":", 1)
@@ -32,10 +41,25 @@ async def read(stream: AsyncTextIOWrapper) -> Dict[str, Union[str, Dict]]:
     return event
 
 
+async def open_connection(
+    in_pipe=sys.stdin,
+    out_pipe=sys.stdout,
+) -> (StreamReader, StreamWriter):
+    loop = asyncio.get_event_loop()
+    reader = asyncio.StreamReader(loop=loop)
+    protocol = StandardStreamReaderProtocol(reader)
+    await loop.connect_read_pipe(lambda: protocol, in_pipe)
+
+    out_transport_connect = loop.connect_write_pipe(lambda: protocol, out_pipe)
+    out_transport, _ = await out_transport_connect
+    writer = asyncio.StreamWriter(out_transport, protocol, reader, loop)
+    return reader, writer
+
+
 class Listener:
     def __init__(self, handler: Callable[[dict], None] = None):
         self.handler = handler
-        self.running = True
+        self.running = False
 
     def set_handler(self, handler: Callable[[dict], None]):
         self.handler = handler
@@ -44,20 +68,15 @@ class Listener:
         self.running = False
 
     async def start(self):
+        self.running = True
         logger.info("event_listener started")
-        async with aio_open(conf.stdout, "w") as std_out:
-            async with aio_open(conf.stdin, "r") as std_in:
-                while self.running:
-                    try:
-                        await write(std_out, READY)
-                        event = await read(std_in)
-                        self.handler(event)
-                        logger.debug(f"event: {event}")
-                        await write(std_out, ACKNOWLEDGED)
-                    except asyncio.CancelledError:
-                        logger.info("listener task canceled")
-                        break
-        logger.info("event_listener stopped")
+        reader, writer = await open_connection()
+        while self.running:
+            await write(writer, READY)
+            event = await read(reader)
+            self.handler(event)
+            logger.debug(f"event: {event}")
+            await write(writer, ACKNOWLEDGED)
 
 
 listener = Listener()

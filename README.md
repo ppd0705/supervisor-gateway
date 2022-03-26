@@ -76,6 +76,6 @@ Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 
 - [supervisor](https://github.com/Supervisor/supervisor)
 - [multivisor](https://github.com/tiagocoutinho/multivisor)
-- [aiofiles](https://github.com/Tinche/aiofiles)
+- [aioconsole](https://github.com/vxgmichel/aioconsole)
 - [aiohttp-xmlrpc](https://github.com/mosquito/aiohttp-xmlrpc)
 - [fastapi](https://github.com/tiangolo/fastapi)

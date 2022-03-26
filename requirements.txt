@@ -1,6 +1,5 @@
 aiohttp
 aiohttp-xmlrpc>=1.5.0
-aiofiles>=0.8.0
 pydantic
 starlette
 fastapi>=0.75.0
