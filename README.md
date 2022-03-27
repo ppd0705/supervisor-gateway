@@ -19,6 +19,12 @@ An RESTful supervisor gateway with paginated and cached process info
 - A `eventlistener` role for events subscription  
 - Cached status API with pagination 
 
+## Architecture
+
+<a href="https://github.com/ppd0705/supervisor-gateway">
+    <img src="https://raw.githubusercontent/ppd0705/supervisor-gateway/master/architecture.png" alt="supervisor-gateway">
+</a>
+
 ## Install
 
 from pypi
