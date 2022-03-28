@@ -12,7 +12,7 @@
 
 # supervisor-gateway
 
-An RESTful supervisor gateway with paginated and cached process info
+A RESTful supervisor gateway with paginated and cached process info
 
 ## Features
 - RESTful API to `supevisord` support
@@ -22,7 +22,7 @@ An RESTful supervisor gateway with paginated and cached process info
 ## Architecture
 
 <a href="https://github.com/ppd0705/supervisor-gateway">
-    <img src="https://raw.githubusercontent/ppd0705/supervisor-gateway/master/architecture.png" alt="supervisor-gateway">
+    <img src="https://github.com/ppd0705/supervisor-gateway/blob/master/architecture.png" alt="supervisor-gateway">
 </a>
 
 ## Install
