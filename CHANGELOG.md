@@ -1,3 +1,8 @@
+## 0.4.0  (2022-04-01)
+
+### Fix
+- add a strong reference to avoid listener_task being garbage collected
+
 ## 0.3.2  (2022-03-28)
 
 ### Doc
