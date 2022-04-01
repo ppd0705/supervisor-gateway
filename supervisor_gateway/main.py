@@ -47,7 +47,13 @@ async def on_startup():
 
     listener.set_handler(state.event_handler)
     loop = get_event_loop()
-    loop.create_task(listener.start())
+    task = loop.create_task(listener.start())
+    app._listener_task = task
+
+    def _clean_task():
+        app._listener_task = None
+
+    task.add_done_callback(_clean_task)
     logger.debug("on_startup finished")
 
 
