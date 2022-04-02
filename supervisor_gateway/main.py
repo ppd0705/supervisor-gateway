@@ -13,6 +13,7 @@ from starlette.status import HTTP_405_METHOD_NOT_ALLOWED
 from supervisor_gateway.api.local import router as local_router
 from supervisor_gateway.api.rpc import router as rpc_router
 from supervisor_gateway.error import BadRequestError
+from supervisor_gateway.error import BaseError
 from supervisor_gateway.error import InternalError
 from supervisor_gateway.error import InvalidParameterError
 from supervisor_gateway.error import MethodNotAllowedError
@@ -70,7 +71,7 @@ async def on_shutdown():
 @app.exception_handler(RPCServerError)
 async def xml_rpc_exception_handler(request: Request, exc: RPCServerError):
     if exc.code == Faults.BAD_NAME:
-        err = ProcessNotFoundError()
+        err: BaseError = ProcessNotFoundError()
     else:
         err = InternalError()
         logger.exception(f"{request.method} {request.url} got XMLServerError.")
@@ -84,7 +85,7 @@ async def xml_rpc_exception_handler(request: Request, exc: RPCServerError):
 async def request_validation_exception_handler(
     request: Request, exc: RequestValidationError
 ):
-    err = InvalidParameterError(exc.errors())
+    err = InvalidParameterError(exc.errors())  # type: ignore
     return JSONResponse(
         status_code=err.http_code,
         content=err.dict(),
@@ -94,7 +95,7 @@ async def request_validation_exception_handler(
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     if exc.status_code == HTTP_400_BAD_REQUEST:
-        err = BadRequestError(exc.detail)
+        err: BaseError = BadRequestError(exc.detail)
     elif exc.status_code == HTTP_404_NOT_FOUND:
         err = NotFoundError(exc.detail)
     elif exc.status_code == HTTP_405_METHOD_NOT_ALLOWED:

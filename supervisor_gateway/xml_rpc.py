@@ -45,7 +45,7 @@ class RPC:
     async def get_all_process_info(self) -> List[Dict]:
         return await self.client.supervisor.getAllProcessInfo()
 
-    async def get_process_info(self, name: str) -> bool:
+    async def get_process_info(self, name: str) -> Dict:
         if ":" not in name:
             name = f"{name}:{name}"
         return await self.client.supervisor.getProcessInfo(name)

@@ -5,6 +5,7 @@ from asyncio import StreamReaderProtocol
 from asyncio import StreamWriter
 from typing import Callable
 from typing import Dict
+from typing import Tuple
 from typing import Union
 
 from supervisor_gateway.log import logger
@@ -44,7 +45,7 @@ async def read(stream: StreamReader) -> Dict[str, Union[str, Dict]]:
 async def open_connection(
     in_pipe=sys.stdin,
     out_pipe=sys.stdout,
-) -> (StreamReader, StreamWriter):
+) -> Tuple[StreamReader, StreamWriter]:
     loop = asyncio.get_event_loop()
     reader = asyncio.StreamReader(loop=loop)
     protocol = StandardStreamReaderProtocol(reader)

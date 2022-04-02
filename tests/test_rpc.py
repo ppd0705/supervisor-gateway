@@ -1,3 +1,5 @@
+from typing import Dict
+from typing import List
 from unittest.mock import AsyncMock
 from unittest.mock import MagicMock
 
@@ -57,7 +59,7 @@ async def test_get_state(mocker: MockerFixture, rpc_client_supervisor: MagicMock
     mock = mocker.patch.object(
         rpc_client_supervisor, "getState", create=True, new=async_mock
     )
-    data = {}
+    data: Dict = {}
     mock.return_value = data
     ret = await rpc.get_state()
     assert isinstance(ret, dict)
@@ -70,7 +72,7 @@ async def test_reread(mocker: MockerFixture, rpc_client_supervisor: MagicMock):
     mock = mocker.patch.object(
         rpc_client_supervisor, "reloadConfig", create=True, new=async_mock
     )
-    data = [[[], [], []]]
+    data: List[List] = [[[], [], []]]
     mock.return_value = data
     ret = await rpc.reread()
     assert isinstance(ret, list)
@@ -85,7 +87,7 @@ async def test_get_all_process_info(
     mock = mocker.patch.object(
         rpc_client_supervisor, "getAllProcessInfo", create=True, new=async_mock
     )
-    data = []
+    data: List = []
     mock.return_value = data
     ret = await rpc.get_all_process_info()
     assert isinstance(ret, list)
@@ -100,7 +102,7 @@ async def test_get_process_info(
     mock = mocker.patch.object(
         rpc_client_supervisor, "getProcessInfo", create=True, new=async_mock
     )
-    data = {}
+    data: Dict = {}
     mock.return_value = data
     ret = await rpc.get_process_info("aaa")
     assert isinstance(ret, dict)

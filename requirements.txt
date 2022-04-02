@@ -10,6 +10,7 @@ autoflake>=1.4.0
 isort>=5.10.0
 black>=22.1.0
 flake8>=4.0.0
+mypy==0.941
 
 # test
 pytest>=7.1.0
