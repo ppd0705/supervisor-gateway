@@ -2,6 +2,7 @@ from typing import List
 
 from fastapi import APIRouter
 
+from supervisor_gateway.schema import ProcessConfState
 from supervisor_gateway.schema import ProcessInfo
 from supervisor_gateway.schema import SupervisorState
 from supervisor_gateway.supervisor import format_process_info
@@ -52,3 +53,28 @@ async def add_rpc_process(name: str):
 @router.post("/processes/{name}/remove")
 async def remove_rpc_process(name: str):
     await rpc.remove_process_group(name)
+
+
+@router.post("/processes/stop")
+async def stop_all_rpc_processes():
+    await rpc.stop_all_processes()
+
+
+@router.post("/processes/start")
+async def start_all_rpc_processes():
+    await rpc.start_all_processes()
+
+
+@router.post("/processes/restart")
+async def restart_all_rpc_processes():
+    await rpc.restart_all_processes()
+
+
+@router.post("/processes/reread", response_model=ProcessConfState)
+async def reread_process_config():
+    return await rpc.reread()
+
+
+@router.post("/processes/update", response_model=ProcessConfState)
+async def update_all_rpc_processes():
+    return await rpc.update_all_processes()

@@ -75,8 +75,8 @@ class Listener:
         while self.running:
             await write(writer, READY)
             event = await read(reader)
-            self.handler(event)
             logger.debug(f"event: {event}")
+            self.handler(event)
             await write(writer, ACKNOWLEDGED)
 
 

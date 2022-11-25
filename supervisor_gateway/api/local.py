@@ -1,7 +1,9 @@
 from fastapi import APIRouter
 
+from supervisor_gateway.error import ProcessNotFoundError
 from supervisor_gateway.local_state import state
 from supervisor_gateway.schema import LocalProcesses
+from supervisor_gateway.schema import ProcessInfo
 
 router = APIRouter()
 
@@ -24,3 +26,11 @@ async def list_processes(
     start = max((page - 1) * limit, 0)
     end = start + limit
     return {"total": total, "processes": [p for _, p in processes[start:end]]}
+
+
+@router.get("/processes/{name}", response_model=ProcessInfo)
+async def get_rpc_process(name: str):
+    item = state.processes.get(name)
+    if item is None:
+        raise ProcessNotFoundError()
+    return item

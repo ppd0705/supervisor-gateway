@@ -72,11 +72,11 @@ async def test_reread(mocker: MockerFixture, rpc_client_supervisor: MagicMock):
     mock = mocker.patch.object(
         rpc_client_supervisor, "reloadConfig", create=True, new=async_mock
     )
-    data: List[List] = [[[], [], []]]
-    mock.return_value = data
+    data: Dict[str, List[str]] = {"added": [], "changed": [], "removed": []}
+    mock.return_value = [[[], [], []]]
     ret = await rpc.reread()
-    assert isinstance(ret, list)
-    assert ret == data[0]
+    assert isinstance(ret, dict)
+    assert sorted(ret) == sorted(data)
 
 
 @pytest.mark.asyncio
@@ -156,3 +156,22 @@ async def test_operate_process(mocker: MockerFixture, rpc_client_supervisor: Mag
         mock.side_effect = None
         ret = await func("aaa")
         assert ret is True
+
+
+@pytest.mark.asyncio
+async def test_operate_processes(
+    mocker: MockerFixture, rpc_client_supervisor: MagicMock
+):
+    async_mock: AsyncMock = AsyncMock()
+    for action, format_action in (
+        ("stop_all_processes", "stopAllProcesses"),
+        ("start_all_processes", "startAllProcesses"),
+    ):
+        mock = mocker.patch.object(
+            rpc_client_supervisor, format_action, create=True, new=async_mock
+        )
+        func = getattr(rpc, action)
+        mock.return_value = True
+        mock.side_effect = None
+        ret = await func()
+        assert ret is None

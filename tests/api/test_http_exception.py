@@ -14,7 +14,7 @@ async def test_root(client: AsyncClient):
     assert response.json() == {
         "code": 40400,
         "detail": "Not Found",
-        "name": "PATH_NOT_FOUND",
+        "message": "PATH_NOT_FOUND",
     }
 
 
@@ -25,7 +25,7 @@ async def test_method_not_allowed(client: AsyncClient):
     assert response.json() == {
         "code": 40500,
         "detail": "Method Not Allowed",
-        "name": "METHOD_NOT_ALLOWED",
+        "message": "METHOD_NOT_ALLOWED",
     }
 
 
@@ -40,7 +40,7 @@ async def test_bad_request(client: AsyncClient):
     assert response.json() == {
         "code": 40000,
         "detail": "bad_request",
-        "name": "BAD_REQUEST",
+        "message": "BAD_REQUEST",
     }
 
 
@@ -55,5 +55,5 @@ async def test_unknown_http_exception(client: AsyncClient):
     assert response.json() == {
         "code": 50000,
         "detail": "",
-        "name": "INTERNAL_ERROR",
+        "message": "INTERNAL_ERROR",
     }

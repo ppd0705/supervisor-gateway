@@ -56,7 +56,7 @@ def test_process_event():
     assert len(state.processes) == 1
     assert "aaa" in state.processes
     _, info = state.processes.popitem()
-    assert set(info) == {"name", "state", "update_time"}
+    assert set(info) == {"name", "state", "from_state", "update_time"}
     assert info["state"] == "BBB"
 
 

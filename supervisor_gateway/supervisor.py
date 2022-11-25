@@ -1,8 +1,10 @@
+from enum import IntEnum
+
 READY = "READY\n"
 ACKNOWLEDGED = "RESULT 2\nOK"
 
 
-class ProcessStates:
+class ProcessStates(IntEnum):
     STOPPED = 0
     STARTING = 10
     RUNNING = 20

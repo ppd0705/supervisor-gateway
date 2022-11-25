@@ -85,7 +85,7 @@ async def xml_rpc_exception_handler(request: Request, exc: RPCServerError):
 async def request_validation_exception_handler(
     request: Request, exc: RequestValidationError
 ):
-    err = InvalidParameterError(exc.errors())  # type: ignore
+    err = InvalidParameterError(exc.json())  # type: ignore
     return JSONResponse(
         status_code=err.http_code,
         content=err.dict(),
@@ -106,4 +106,12 @@ async def http_exception_handler(request: Request, exc: HTTPException):
     return JSONResponse(
         status_code=err.http_code,
         content=err.dict(),
+    )
+
+
+@app.exception_handler(BaseError)
+async def base_error_handler(request: Request, exc: BaseError):
+    return JSONResponse(
+        status_code=exc.http_code,
+        content=exc.dict(),
     )

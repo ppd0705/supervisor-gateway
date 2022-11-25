@@ -37,10 +37,14 @@ class RPC:
         state = await self.client.supervisor.getState()
         return state
 
-    async def reread(self) -> List[List[str]]:
+    async def reread(self) -> Dict[str, List[str]]:
         data = await self.client.supervisor.reloadConfig()
-        added, changed, dropped = data[0]
-        return [added, changed, dropped]
+        added, changed, removed = data[0]
+        return {
+            "added": added,
+            "changed": changed,
+            "removed": removed,
+        }
 
     async def get_all_process_info(self) -> List[Dict]:
         return await self.client.supervisor.getAllProcessInfo()
@@ -88,6 +92,29 @@ class RPC:
     async def remove_process_group(self, name: str) -> bool:
         await self.stop_process_group(name)
         return await self.client.supervisor.removeProcessGroup(name)
+
+    async def stop_all_processes(self):
+        await self.client.supervisor.stopAllProcesses()
+
+    async def start_all_processes(self):
+        await self.client.supervisor.startAllProcesses()
+
+    async def restart_all_processes(self):
+        await self.stop_all_processes()
+        await self.start_all_processes()
+
+    async def update_all_processes(self) -> Dict[str, List[str]]:
+        data = await self.reread()
+        for name in data["added"]:
+            await self.start_process(name)
+        for name in data["removed"]:
+            await self.stop_process(name)
+            await self.remove_process_group(name)
+        for name in data["changed"]:
+            await self.stop_process(name)
+            await self.remove_process_group(name)
+            await self.start_process(name)
+        return data
 
 
 rpc = RPC(conf.rpc_url)

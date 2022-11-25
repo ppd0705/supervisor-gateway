@@ -1,8 +1,8 @@
-aiohttp
 aiohttp-xmlrpc>=1.5.0
-pydantic
-starlette
+aiohttp
 fastapi>=0.75.0
+starlette
+pydantic
 uvicorn>=0.17.6
 
 # lint

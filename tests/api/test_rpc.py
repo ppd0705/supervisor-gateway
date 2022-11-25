@@ -26,14 +26,14 @@ async def test_list_rpc_processes(client: AsyncClient, mocker: MockerFixture):
         {
             "name": "AAA",
             "state": ProcessStates.RUNNING,
-            "statename": "RUNNING",
+            "statename": ProcessStates.RUNNING.name,
             "stop": 1,
             "start": 0,
         },
         {
             "name": "BBB",
             "state": ProcessStates.STOPPED,
-            "statename": "STOPPED",
+            "statename": ProcessStates.STOPPED.name,
             "stop": 1,
             "start": 0,
         },
@@ -42,8 +42,8 @@ async def test_list_rpc_processes(client: AsyncClient, mocker: MockerFixture):
     response = await client.get("/rpc/processes")
     assert response.status_code == 200
     assert response.json() == [
-        {"name": "AAA", "state": "RUNNING", "update_time": 0},
-        {"name": "BBB", "state": "STOPPED", "update_time": 1},
+        {"name": "AAA", "state": "RUNNING", "from_state": "", "update_time": 0},
+        {"name": "BBB", "state": "STOPPED", "from_state": "", "update_time": 1},
     ]
 
 
@@ -61,12 +61,22 @@ async def test_get_rpc_process(client: AsyncClient, mocker: MockerFixture):
     mock.return_value = data
     response = await client.get("/rpc/processes/AAA")
     assert response.status_code == 200
-    assert response.json() == {"name": "AAA", "state": "BBB", "update_time": 0}
+    assert response.json() == {
+        "name": "AAA",
+        "state": "BBB",
+        "from_state": "",
+        "update_time": 0,
+    }
 
     data["state"] = ProcessStates.STOPPED
     response = await client.get("/rpc/processes/AAA")
     assert response.status_code == 200
-    assert response.json() == {"name": "AAA", "state": "BBB", "update_time": 1}
+    assert response.json() == {
+        "name": "AAA",
+        "state": "BBB",
+        "from_state": "",
+        "update_time": 1,
+    }
 
     server_error = ServerError()
     server_error.code = Faults.BAD_NAME
@@ -96,3 +106,30 @@ async def test_operate_process(client: AsyncClient, mocker: MockerFixture):
         mock.return_value = True
         response = await client.post(f"/rpc/processes/aaa/{action}")
         assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_operate_processes(client: AsyncClient, mocker: MockerFixture):
+    for action, method in [
+        ("start", "start_all_processes"),
+        ("stop", "stop_all_processes"),
+        ("restart", "restart_all_processes"),
+    ]:
+        mock = mocker.patch(f"supervisor_gateway.xml_rpc.rpc.{method}")
+        mock.return_value = True
+        response = await client.post(f"/rpc/processes/{action}")
+        assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_reread_processes(client: AsyncClient, mocker: MockerFixture):
+    data = {"added": ["aaa"], "changed": ["b", "c"], "removed": ["d"]}
+    for action, method in [
+        ("reread", "reread"),
+        ("update", "update_all_processes"),
+    ]:
+        mock = mocker.patch(f"supervisor_gateway.xml_rpc.rpc.{method}")
+        mock.return_value = data
+        response = await client.post(f"/rpc/processes/{action}")
+        assert response.status_code == 200
+        assert response.json() == data

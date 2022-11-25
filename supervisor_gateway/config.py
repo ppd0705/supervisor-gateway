@@ -1,4 +1,5 @@
 import os
+from typing import List
 
 
 class Conf:
@@ -13,6 +14,11 @@ class Conf:
         # log
         self.log_level: str = os.environ.get("SG_LOG_LEVEL") or "DEBUG"
         self.log_file: str = os.environ.get("SG_LOG_FILE") or "supervisor_gateway.log"
+
+        # notify states
+        self.notify_states: List[str] = os.environ.get("SG_NOTIFY_STATES", "").split(
+            ","
+        )
 
 
 conf = Conf()
